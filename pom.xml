@@ -11,8 +11,8 @@
 
   <artifactId>scraper-aebn</artifactId>
   <version>1.1</version>
-  <name>AEBN scraper</name>
-  <description>An Adult Entertainment scraper for tinyMediaManager</description>
+  <name>tinyMediaManager scraper-AEBN</name>
+  <description>An Adult Entertainment scraper for tinyMediaManager.</description>
 
   <build>
     <plugins>
@@ -53,4 +53,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <url>https://github.com/NETHeader/${project.artifactId}</url>
+  <issueManagement>
+  	<system>Github Issues</system>
+  	<url>https://github.com/NETHeader/${project.artifactId}/issues</url>
+  </issueManagement>
+  <scm>
+  	<url>https://github.com/NETHeader/${project.artifactId}</url>
+  	<tag>HEAD</tag>
+  	<connection>scm:git:https://github.com/NETHeader/${project.artifactId}</connection>
+  	<developerConnection>scm:git:https://github.com/NETHeader</developerConnection>
+  </scm>
+  <inceptionYear>2014</inceptionYear>
 </project>

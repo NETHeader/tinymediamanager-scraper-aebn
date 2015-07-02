@@ -10,9 +10,9 @@
   </parent>
 
   <artifactId>scraper-aebn</artifactId>
-  <version>1.1</version>
-  <name>tinyMediaManager scraper-AEBN</name>
-  <description>An Adult Entertainment scraper for tinyMediaManager.</description>
+  <version>0.2</version>
+  <name>tinyMediaManager scraper-aebn</name>
+  <description>An Adult Entertainment scraper plugin for tinyMediaManager.</description>
 
   <build>
     <plugins>
@@ -60,7 +60,6 @@
   </issueManagement>
   <scm>
   	<url>https://github.com/NETHeader/${project.artifactId}</url>
-  	<tag>HEAD</tag>
   	<connection>scm:git:https://github.com/NETHeader/${project.artifactId}</connection>
   	<developerConnection>scm:git:https://github.com/NETHeader</developerConnection>
   </scm>

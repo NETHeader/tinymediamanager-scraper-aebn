@@ -1,2 +1,3 @@
 # scraper-aebn
-A tinyMediaManager plugin to scrape data from AEBN
+
+A tinyMediaManager (http://www.tinymediamanager.org) plugin to scrape data from AEBN.

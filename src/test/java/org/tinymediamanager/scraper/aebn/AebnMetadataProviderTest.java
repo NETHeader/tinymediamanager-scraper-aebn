@@ -11,7 +11,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
  * A test class for scraping aebn.net.
  *
  * @author NETHead <NETHead@gmx.net>
- * @version 0.1
+ * @version 0.2
  * @see AebnMetadataProvider
  *
  */
@@ -28,7 +28,7 @@ public void testSearch() throws Exception {
         assertThat(results.size()).isEqualTo(60);
     }
     catch (Exception e) {
-    	System.err.println(e.getMessage());
+        System.err.println(e.getMessage());
         e.printStackTrace();
         Assert.fail();
     }
@@ -59,7 +59,7 @@ public void testScrapeData() throws Exception {
       assertThat(md.getCastMembers().size()).isEqualTo(8);	// Don't forget to add actor + director to this number!
     }
     catch (Exception e) {
-    	System.err.println(e.getMessage());
+        System.err.println(e.getMessage());
         e.printStackTrace();
         Assert.fail();
     }

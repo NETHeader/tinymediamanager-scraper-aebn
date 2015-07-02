@@ -48,7 +48,7 @@ import org.jsoup.select.Elements;
  * Implements scraping of meta data, artwork and trailers.
  *
  * @author NETHead <NETHead@gmx.net>
- * @version 0.1
+ * @version 0.2
  * @see IMediaMetadataProvider
  * @see IMediaArtworkProvider
  * @see IMediaTrailerProvider

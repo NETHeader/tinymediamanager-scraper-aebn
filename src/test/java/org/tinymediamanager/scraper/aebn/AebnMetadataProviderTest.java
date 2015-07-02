@@ -17,25 +17,25 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
  */
 public class AebnMetadataProviderTest {
 
-  @Test
-  public void testSearch() {
+@Test
+public void testSearch() throws Exception {
     try {
-      IMovieMetadataProvider aebn = new AebnMetadataProvider();
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
+        IMovieMetadataProvider aebn = new AebnMetadataProvider();
+        MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
 
-      options.set(SearchParam.QUERY, "Erotic Massage Stories 5");
-
-      List<MediaSearchResult> results = aebn.search(options);
-      assertThat(results.size()).isEqualTo(60);
+        options.set(SearchParam.QUERY, "Erotic Massage Stories 5");
+        List<MediaSearchResult> results = aebn.search(options);
+        assertThat(results.size()).isEqualTo(60);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      Assert.fail();
+    	System.err.println(e.getMessage());
+        e.printStackTrace();
+        Assert.fail();
     }
-  }
+}
 
-  @Test
-  public void testScrape() throws Exception {
+@Test
+public void testScrapeData() throws Exception {
     try {
       IMovieMetadataProvider aebn = new AebnMetadataProvider();
       MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
@@ -52,15 +52,16 @@ public class AebnMetadataProviderTest {
       assertThat(md.getStringValue(MediaMetadata.PRODUCTION_COMPANY)).isEqualTo("Pure Passion");
       assertThat(md.getStringValue(MediaMetadata.TMDBID)).isEqualTo("");
       assertThat(md.getStringValue(MediaMetadata.IMDBID)).isEqualTo("");
-      assertThat(md.getStringValue(MediaMetadata.RUNTIME)).isEqualTo(145);
-      assertThat(md.getGenres().size()).isEqualTo(8);
+      assertThat(md.getStringValue(MediaMetadata.RUNTIME)).isEqualTo("145");
+      assertThat(md.getGenres().size()).isEqualTo(7);
       assertThat(md.getGenres().contains(MediaGenres.EROTIC)).isTrue();
       assertThat(md.getStringValue(MediaMetadata.COLLECTION_NAME)).isEqualTo("Erotic Massage Stories");
-      assertThat(md.getCastMembers().size()).isEqualTo(8);	// Don't forget to add actor + director!
+      assertThat(md.getCastMembers().size()).isEqualTo(8);	// Don't forget to add actor + director to this number!
     }
     catch (Exception e) {
-      e.printStackTrace();
-      Assert.fail();
+    	System.err.println(e.getMessage());
+        e.printStackTrace();
+        Assert.fail();
     }
-  }
+}
 }

@@ -57,9 +57,8 @@ import org.jsoup.select.Elements;
 @PluginImplementation
 public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider, IMovieTrailerProvider {
   private static AebnMetadataProvider instance;
-  private static final String		AEBNID 		 = "AebnId";
-  private static MediaProviderInfo	providerInfo = new MediaProviderInfo(AEBNID, "aebn.net",
-                                                       "Media scraper for the Adult Entertainment Broadcast Network (AEBN)");
+  private static final String		AEBNID 		 = "AebnID";
+  private static MediaProviderInfo providerInfo = createMediaProviderInfo();
   private static final Logger       LOGGER       = LoggerFactory.getLogger(AebnMetadataProvider.class);
   private static final String       BASE_DATAURL = "http://theater.aebn.net";
   private static final String       BASE_IMGURL  = "http://pic.aebn.net";
@@ -77,6 +76,15 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
   @Override
   public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
+  }
+
+  private static MediaProviderInfo createMediaProviderInfo() {
+    MediaProviderInfo providerInfo = new MediaProviderInfo(
+      AEBNID,
+      "aebn.net",
+      "<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database. This scraper is able to scrape metadata and artwork.</html>",
+      AebnMetadataProvider.class.getResource("/aebn_net.png"));
     return providerInfo;
   }
 
@@ -195,7 +203,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
     LOGGER.debug("AEBN: getMetadata() {}", options);
 
     // check if there is already meta data present in the result
-    if (options.getResult() != null && options.getResult().getMediaMetadata() != null) {
+    if ((options.getResult() != null) && (options.getResult().getMediaMetadata() != null)) {
       LOGGER.debug("AEBN: return metadata from cache");
       return options.getResult().getMediaMetadata();
     }
@@ -205,19 +213,19 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
     Element element = null;
     Integer aebnId = 0;
 
-    // get aebnId from previous search result
+    // get AebnId from previous search result
     if ((options.getResult() != null) && (options.getResult().getId() != null)) {
       aebnId = Integer.parseInt(options.getResult().getId());
-      LOGGER.debug("AEBN: got aebnId({}) from previous search result", aebnId);
+      LOGGER.debug("AEBN: aebnId() from previous search result = {}", aebnId);
       // preset some values from search result (if there is one)
       // Use core.Utils.RemoveSortableName() if you want eg "Bourne Legacy, The" -> "The Bourne Legacy".
       md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, StrgUtils.removeCommonSortableName(options.getResult().getOriginalTitle()));
       md.storeMetadata(MediaMetadata.TITLE, StrgUtils.removeCommonSortableName(options.getResult().getTitle()));
     }
 
-    // or get aebnId from options
-    if (!isValidAebnId(aebnId)) {
-      LOGGER.debug("AEBN: got aebnId({}) from options", options.getId(AEBNID));
+    // or get AebnId from options
+    if (!isValidAebnId(aebnId) && (options.getId(AEBNID) != null)) {
+      LOGGER.debug("AEBN: aebnId() from options = {}", options.getId(AEBNID));
       aebnId = Integer.parseInt(options.getId(AEBNID));
     }
 

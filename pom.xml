@@ -9,9 +9,9 @@
     <relativePath>../tmm-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>scraper-aebn</artifactId>
+  <artifactId>tinymediamanager-scraper-aebn</artifactId>
   <version>0.2</version>
-  <name>tinyMediaManager scraper-aebn</name>
+  <name>tinyMediaManager AEBN scraper plugin</name>
   <description>An Adult Entertainment scraper plugin for tinyMediaManager.</description>
 
   <build>

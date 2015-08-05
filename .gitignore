@@ -12,8 +12,8 @@
 hs_err_pid*
 
 # Maven
-cache
-target
+cache/
+target/
 release.properties
 pom.xml.*
 

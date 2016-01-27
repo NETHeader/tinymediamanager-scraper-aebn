@@ -5,14 +5,13 @@
   <parent>
     <groupId>org.tinymediamanager</groupId>
     <artifactId>tmm-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <relativePath>../tmm-parent/pom.xml</relativePath>
+    <version>1.0</version>
   </parent>
 
-  <artifactId>tinymediamanager-scraper-aebn</artifactId>
-  <version>0.2</version>
-  <name>tinyMediaManager AEBN scraper plugin</name>
-  <description>An Adult Entertainment scraper plugin for tinyMediaManager.</description>
+  <artifactId>scraper-aebn</artifactId>
+  <version>0.3</version>
+  <name>AEBN.net scraper</name>
+  <description>An Adult Entertainment Broadcast Network scraper plugin for tinyMediaManager.</description>
 
   <build>
     <plugins>
@@ -37,16 +36,10 @@
     <dependency>
       <groupId>org.tinymediamanager</groupId>
       <artifactId>api-scraper</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.2</version>
     </dependency>
 
     <!-- TESTS -->
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>1.7.1</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <url>https://github.com/NETHeader/${project.artifactId}</url>
   <issueManagement>
@@ -59,4 +52,5 @@
       <developerConnection>scm:git:https://github.com/NETHeader</developerConnection>
   </scm>
   <inceptionYear>2014</inceptionYear>
+  <groupId>org.tinymediamanager.plugins</groupId>
 </project>

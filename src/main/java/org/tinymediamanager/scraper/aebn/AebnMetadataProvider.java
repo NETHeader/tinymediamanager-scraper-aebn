@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.UnsupportedMediaTypeException;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
@@ -58,11 +59,11 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * @version 0.3
  * @see IMediaMetadataProvider
  * @see IMediaArtworkProvider
- * @see IMediaTrailerProvider
  *
  */
 @PluginImplementation
 public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider {
+
 	private static AebnMetadataProvider instance;
 	private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AebnMetadataProvider.class);
@@ -81,6 +82,11 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 
 	public AebnMetadataProvider() {
+		// configure/load settings
+		// providerInfo.getConfig().addBoolean("useTmdb", false);
+		// providerInfo.getConfig().addBoolean("scrapeCollectionInfo", false);
+
+		// providerInfo.getConfig().load();
 	}
 
 
@@ -101,26 +107,52 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 
 	/**
-	 * Search for movies at aebn.net.
+	 * Search at aebn.net
 	 *
 	 */
 	@Override
 	public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
 		LOGGER.debug("AEBN: search() {}", query);
+
+		// check type
+		if (query.getMediaType() == MediaType.MOVIE) {
+			return searchMovies(query);
+		}
+
+		if (query.getMediaType() == MediaType.MOVIE_SET) {
+			return searchMovies(query);
+		}
+
+		throw new UnsupportedMediaTypeException(query.getMediaType());
+	}
+
+
+	public List<MediaSearchResult> searchMovies(MediaSearchOptions query) throws Exception {
+
+		LOGGER.debug("AEBN: searchMovies() {}", query);
 		List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
 		Elements movies = null;
 		String searchString = "";
 
-		// Search for query
+		// get search string from query
 		if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
 			searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
 		}
+		if (StringUtils.isEmpty(searchString)) {
+			LOGGER.debug("AEBN: empty searchString");
+			return resultList;
+		}
 
-		// Search
+		// sanitize search string
+		searchString = MetadataUtil.removeNonSearchCharacters(searchString);
+
+		// concatenate search query url
 		String searchUrl = BASE_DATAURL + "/dispatcher/fts?userQuery="
 				+ URLEncoder.encode(cleanSearchQuery(searchString), "UTF-8")
 				+ "&targetSearchMode=basic&isAdvancedSearch=true&isFlushAdvancedSearchCriteria=false" + "&count="
 				+ SEARCH_COUNT.toString() + "&imageType=Large&sortType=Relevance";
+
+		// Search
 		try {
 			LOGGER.info("========= BEGIN AEBN Scraper Search for: {}", searchString);
 			Url url = new Url(searchUrl);
@@ -158,7 +190,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 				MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
 				sr.setId(movieId);
-				sr.setIMDBId("");
+				// sr.setIMDBId("");
 				sr.setTitle(movieName);
 				sr.setOriginalTitle(movieName);
 				// sr.setYear not possible, no data at this point
@@ -195,6 +227,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 				LOGGER.warn("AEBN: error parsing search result: {}", e);
 			}
 		}
+
 		Collections.sort(resultList);
 		Collections.reverse(resultList);
 
@@ -282,6 +315,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			md.storeMetadata(MediaMetadata.POSTER_URL, posterUrl);
 
 			// Fanart/Background
+			// Attention: this is non-standard, since TMM cannot get fanarts without a valid id
 			// http://pic.aebn.net/Stream/Movie/Scenes/a113324_s534541.jpg
 			// <img class="sceneThumbnail" alt="Scene Thumbnail" title="Scene Thumbnail" onError="..."
 			// src="http://pic.aebn.net/Stream/Movie/Scenes/a113324_s534544.jpg" onclick="..." />
@@ -478,9 +512,6 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 	/**
 	 * Get movie artwork from aebn.net.
-	 * <p>
-	 * <b>NOTICE:</b> Automatic image scraping does not work (aebnId is not transferred)! Must be set to manual image
-	 * scraping at the tmm movie scraper settings.
 	 *
 	 */
 	@Override
@@ -496,7 +527,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			LOGGER.debug("AEBN: got aebnId({}) from options", aebnId);
 		}
 		if (!isValidAebnId(aebnId)) {
-			LOGGER.info("AEBN: could not scrape artwork, no or incorrect aebnId");
+			LOGGER.info("AEBN: could not scrape artwork, no or incorrect aebn id");
 			return artwork;
 		}
 
@@ -508,16 +539,24 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			// http://pic.aebn.net/Stream/Movie/Boxcovers/a136807_160w.jpg
 			MediaArtwork ma = new MediaArtwork();
 			ma.setProviderId(providerInfo.getId());
-			String posterpreviewUrl = BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlf.jpg";
+			String posterpreviewUrl = AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString()
+					+ "_xlf.jpg";
 			String posterUrl = posterpreviewUrl;
 			ma.setDefaultUrl(posterUrl);
 			ma.setPreviewUrl(posterpreviewUrl);
-			ma.addImageSize(380, 540, BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlf.jpg");
-			ma.addImageSize(220, 313, BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_bf.jpg");
-			ma.addImageSize(160, 227, BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_160w.jpg");
+			ma.addImageSize(380, 540,
+					AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlf.jpg");
+			ma.addImageSize(220, 313,
+					AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_bf.jpg");
+			ma.addImageSize(160, 227,
+					AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_160w.jpg");
 			ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
 			ma.setLanguage(options.getLanguage().name());
 			ma.setType(MediaArtworkType.POSTER);
+
+			// categorize image size and write default url
+			prepareDefaultPoster(ma, options);
+
 			artwork.add(ma);
 			LOGGER.debug("AEBN: add poster({})", posterpreviewUrl);
 		}
@@ -528,12 +567,15 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			// http://pic.aebn.net/Stream/Movie/Boxcovers/a136807_bb.jpg
 			MediaArtwork ma = new MediaArtwork();
 			ma.setProviderId(providerInfo.getId());
-			String posterpreviewUrl = BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlb.jpg";
+			String posterpreviewUrl = AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString()
+					+ "_xlb.jpg";
 			String posterUrl = posterpreviewUrl;
 			ma.setDefaultUrl(posterUrl);
 			ma.setPreviewUrl(posterpreviewUrl);
-			ma.addImageSize(380, 540, BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlb.jpg");
-			ma.addImageSize(220, 313, BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_bb.jpg");
+			ma.addImageSize(380, 540,
+					AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_xlb.jpg");
+			ma.addImageSize(220, 313,
+					AebnMetadataProvider.BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + aebnId.toString() + "_bb.jpg");
 			ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
 			ma.setLanguage(options.getLanguage().name());
 			ma.setType(MediaArtworkType.DISC);
@@ -541,12 +583,14 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			LOGGER.debug("AEBN: add poster({})", posterpreviewUrl);
 		}
 
+		// Movie scenes (stored as Background)
 		if ((options.getArtworkType() == MediaArtworkType.ALL)
 				|| (options.getArtworkType() == MediaArtworkType.BACKGROUND)) {
+
 			// Need to scrape movie metadata first (see getMetaData() -> Fanart/Background)
 			md = getMetadata(options);
 			LOGGER.debug("AEBN: return from media metadata scraping");
-			aebnId = Integer.parseInt(options.getId(AEBNID));
+			aebnId = Integer.parseInt(options.getId(AebnMetadataProvider.AEBNID));
 			int i = 1;
 			while (!md.getStringValue("backgroundUrl" + Integer.valueOf(i).toString()).isEmpty()) {
 				MediaArtwork ma = new MediaArtwork();
@@ -559,12 +603,92 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 				ma.setSizeOrder(FanartSizes.SMALL.getOrder());
 				ma.setLanguage(options.getLanguage().name());
 				ma.setType(MediaArtworkType.BACKGROUND);
+				// ma.setLikes(image.likes); // unsupported
+
+				// categorize image size and write default url
+				prepareDefaultFanart(ma, options);
+
 				artwork.add(ma);
 				LOGGER.debug("AEBN: add background({})", backgroundUrl);
 				i++;
 			}
 		}
 		return artwork;
+	}
+
+
+	private void prepareDefaultPoster(MediaArtwork ma, MediaScrapeOptions options) {
+		for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
+			// LARGE
+			if (image.getWidth() >= 1000) {
+				if (options.getPosterSize().getOrder() >= MediaArtwork.PosterSizes.LARGE.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.PosterSizes.LARGE.getOrder());
+					break;
+				}
+				continue;
+			}
+			// BIG
+			if (image.getWidth() >= 500) {
+				if (options.getPosterSize().getOrder() >= MediaArtwork.PosterSizes.BIG.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.PosterSizes.BIG.getOrder());
+					break;
+				}
+				continue;
+			}
+			// MEDIUM
+			if (image.getWidth() >= 342) {
+				if (options.getPosterSize().getOrder() >= MediaArtwork.PosterSizes.MEDIUM.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.PosterSizes.MEDIUM.getOrder());
+					break;
+				}
+				continue;
+			}
+			// SMALL
+			if (image.getWidth() >= 185) {
+				if (options.getPosterSize() == MediaArtwork.PosterSizes.SMALL) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.PosterSizes.SMALL.getOrder());
+					break;
+				}
+				continue;
+			}
+		}
+	}
+
+
+	private void prepareDefaultFanart(MediaArtwork ma, MediaScrapeOptions options) {
+		for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
+			// LARGE
+			if (image.getWidth() >= 1920) {
+				if (options.getFanartSize().getOrder() >= MediaArtwork.FanartSizes.LARGE.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.FanartSizes.LARGE.getOrder());
+					break;
+				}
+				continue;
+			}
+			// MEDIUM
+			if (image.getWidth() >= 1280) {
+				if (options.getFanartSize().getOrder() >= MediaArtwork.FanartSizes.MEDIUM.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.FanartSizes.MEDIUM.getOrder());
+					break;
+				}
+				continue;
+			}
+			// SMALL
+			if (image.getWidth() >= 300) {
+				if (options.getFanartSize().getOrder() >= MediaArtwork.FanartSizes.SMALL.getOrder()) {
+					ma.setDefaultUrl(image.getUrl());
+					ma.setSizeOrder(MediaArtwork.FanartSizes.SMALL.getOrder());
+					break;
+				}
+				continue;
+			}
+		}
 	}
 
 

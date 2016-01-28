@@ -64,9 +64,9 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @PluginImplementation
 public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider {
 	private static AebnMetadataProvider instance;
-	private static final String AEBNID = "AebnID";
 	private static MediaProviderInfo providerInfo = createMediaProviderInfo();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AebnMetadataProvider.class);
+	private static final String AEBNID = "aebn";
 	private static final String BASE_DATAURL = "http://theater.aebn.net";
 	private static final String BASE_IMGURL = "http://pic.aebn.net";
 	private static final Integer SEARCH_COUNT = 60;
@@ -92,7 +92,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 	private static MediaProviderInfo createMediaProviderInfo() {
 		MediaProviderInfo providerInfo = new MediaProviderInfo(AEBNID, "aebn.net",
-				"<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database."
+				"<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database.<br />"
 						+ "This scraper is able to scrape metadata and artwork.</html>",
 				AebnMetadataProvider.class.getResource("/aebn_net.png"));
 		providerInfo.setVersion(AebnMetadataProvider.class);

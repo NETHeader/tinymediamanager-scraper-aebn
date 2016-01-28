@@ -5,7 +5,7 @@ A [tinyMediaManager](http://www.tinymediamanager.org) plugin to scrape data from
 Latest pre-release: [v0.3-alpha](https://github.com/NETHeader/tinymediamanager-scraper-aebn/releases/tag/v0.3-alpha)
 
 #### Install
-Just copy it into the plugin folder of tinyMediaManager, then start tinyMediaManager and select it within the settings dialog.
+Just copy it into the plugin folder of tinyMediaManager, then start tinyMediaManager and select it within the [movie scraper settings dialog](http://www.tinymediamanager.org/index.php/usage/settings/#movie_scrapers).
 It has no configurable options, so it should be of straight forward use.
 
 #### Bug reporting

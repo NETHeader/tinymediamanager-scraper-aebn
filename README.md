@@ -11,5 +11,5 @@ It has no configurable options, so it should be of straight forward use.
 #### Bug reporting
 
 If you think you have detect an error, look at the [Issues](https://github.com/NETHeader/tinymediamanager-scraper-aebn/issues) page if there is already an issue covering it, or file a new one.
-Please be as specific as necessary describing the problem and attach a logfile (set the log level to `DEBUG` at the [TMM settings dialog](http://www.tinymediamanager.org/index.php/usage/settings/#general)).
-Both makes it a lot easier to track the problem down.
+Please be as specific as necessary describing the problem and attach a logfile (set the log level to `DEBUG` at the [general settings dialog](http://www.tinymediamanager.org/index.php/usage/settings/#general)).
+Both makes it a lot easier to track the problem down, without the need for requesting those information from you.

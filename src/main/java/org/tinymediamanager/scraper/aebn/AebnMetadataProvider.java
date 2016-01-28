@@ -1,17 +1,14 @@
 /*
  * Copyright 2015-206 NETHead <NETHead@gmx.net>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package org.tinymediamanager.scraper.aebn;
@@ -43,12 +40,10 @@ import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.mediaprovider.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.mediaprovider.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
@@ -60,14 +55,14 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
  * Implements scraping of meta data, artwork and trailers.
  *
  * @author NETHead <NETHead@gmx.net>
- * @version 0.2
+ * @version 0.3
  * @see IMediaMetadataProvider
  * @see IMediaArtworkProvider
  * @see IMediaTrailerProvider
  *
  */
 @PluginImplementation
-public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider, IMovieTrailerProvider {
+public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtworkProvider {
 	private static AebnMetadataProvider instance;
 	private static final String AEBNID = "AebnID";
 	private static MediaProviderInfo providerInfo = createMediaProviderInfo();
@@ -76,6 +71,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	private static final String BASE_IMGURL = "http://pic.aebn.net";
 	private static final Integer SEARCH_COUNT = 60;
 
+
 	public static synchronized AebnMetadataProvider getInstance() {
 		if (instance == null) {
 			instance = new AebnMetadataProvider();
@@ -83,20 +79,26 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		return instance;
 	}
 
+
 	public AebnMetadataProvider() {
 	}
+
 
 	@Override
 	public MediaProviderInfo getProviderInfo() {
 		return providerInfo;
 	}
 
+
 	private static MediaProviderInfo createMediaProviderInfo() {
 		MediaProviderInfo providerInfo = new MediaProviderInfo(AEBNID, "aebn.net",
-				"<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database. This scraper is able to scrape metadata and artwork.</html>",
+				"<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database."
+						+ "This scraper is able to scrape metadata and artwork.</html>",
 				AebnMetadataProvider.class.getResource("/aebn_net.png"));
+		providerInfo.setVersion(AebnMetadataProvider.class);
 		return providerInfo;
 	}
+
 
 	/**
 	 * Search for movies at aebn.net.
@@ -126,8 +128,8 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			Document doc = Jsoup.parse(in, "UTF-8", "");
 			in.close();
 
-			// only look for movie links like <a
-			// id="FTSMovieSearch_link_title_detail_30" ... </a>
+			// only look for movie links like
+			// <a id="FTSMovieSearch_link_title_detail_30" ... </a>
 			movies = doc.getElementsByAttributeValueMatching("id", "FTSMovieSearch_link_title_detail_\\d+");
 			LOGGER.debug("AEBN: found {} search results", movies.size());
 		} catch (Exception e) {
@@ -149,7 +151,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 				String posterUrl = BASE_IMGURL + "/Stream/Movie/Boxcovers/a" + movieId + "_160w.jpg";
 				LOGGER.debug("AEBN: found movie {} (id{})", movieName, movieId);
 
-				// check if it is a valid aebn id
+				// check if it is a valid AEBN id
 				if (!isValidAebnId(Integer.parseInt(movieId))) {
 					LOGGER.error("AEBN: id({}) is not a valid aebn id", movieId);
 				}
@@ -179,14 +181,13 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 					continue;
 				}
 
-				// check if the movie has been already added to the search
-				// results
+				// check if the movie has been already added to the search results
 				if (foundResultUrls.contains(sr.getUrl())) {
 					continue;
 				}
 				foundResultUrls.add(sr.getUrl());
 
-				// populate extra arguments
+				// populate extra arguments (deprecated)
 				// MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
 				resultList.add(sr);
@@ -199,6 +200,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 		return resultList;
 	}
+
 
 	/**
 	 * Get movie meta data from aebn.net.
@@ -224,8 +226,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 			aebnId = Integer.parseInt(options.getResult().getId());
 			LOGGER.debug("AEBN: aebnId() from previous search result = {}", aebnId);
 			// preset some values from search result (if there is one)
-			// Use core.Utils.RemoveSortableName() if you want eg "Bourne
-			// Legacy, The" -> "The Bourne Legacy".
+			// Use core.Utils.RemoveSortableName() if you want e.g. "Bourne Legacy, The" -> "The Bourne Legacy".
 			md.storeMetadata(MediaMetadata.ORIGINAL_TITLE,
 					StrgUtils.removeCommonSortableName(options.getResult().getOriginalTitle()));
 			md.storeMetadata(MediaMetadata.TITLE, StrgUtils.removeCommonSortableName(options.getResult().getTitle()));
@@ -282,11 +283,8 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 			// Fanart/Background
 			// http://pic.aebn.net/Stream/Movie/Scenes/a113324_s534541.jpg
-			// <img class="sceneThumbnail" alt="Scene Thumbnail" title="Scene
-			// Thumbnail"
-			// onError="..."
-			// src="http://pic.aebn.net/Stream/Movie/Scenes/a113324_s534544.jpg"
-			// onclick="..." />
+			// <img class="sceneThumbnail" alt="Scene Thumbnail" title="Scene Thumbnail" onError="..."
+			// src="http://pic.aebn.net/Stream/Movie/Scenes/a113324_s534544.jpg" onclick="..." />
 			LOGGER.debug("AEBN: parse fanart / scene thumbs");
 			elements = document.getElementsByAttributeValue("class", "SceneThumbnail");
 			LOGGER.debug("AEBN: {} elements found", elements.size());
@@ -329,17 +327,10 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 				LOGGER.debug("AEBN: {} elements found (should be one!)", elements.size());
 				element = elements.first();
 				String movieCollection = cleanString(element.text());
-				int movieCollectionHash = movieCollection.hashCode(); // Fake a
-																		// TMDBSET_ID
-																		// based
-																		// on
-																		// the
-																		// hash
-																		// value
-																		// of
-																		// the
-																		// collection
-																		// name
+
+				// Fake a TMDB_SET based on the hash value of the collection name
+				int movieCollectionHash = movieCollection.hashCode();
+
 				md.storeMetadata(MediaMetadata.COLLECTION_NAME, movieCollection);
 				md.storeMetadata(MediaMetadata.TMDB_SET, movieCollectionHash);
 				LOGGER.debug("AEBN: collection({}), hashcode({})", movieCollection, movieCollectionHash);
@@ -484,12 +475,12 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		return md;
 	}
 
+
 	/**
 	 * Get movie artwork from aebn.net.
 	 * <p>
-	 * <b>NOTICE:</b> Automatic image scraping does not work (aebnId is not
-	 * transferred)! Must be set to manual image scraping at the tmm movie
-	 * scraper settings.
+	 * <b>NOTICE:</b> Automatic image scraping does not work (aebnId is not transferred)! Must be set to manual image
+	 * scraping at the tmm movie scraper settings.
 	 *
 	 */
 	@Override
@@ -552,8 +543,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 
 		if ((options.getArtworkType() == MediaArtworkType.ALL)
 				|| (options.getArtworkType() == MediaArtworkType.BACKGROUND)) {
-			// Need to scrape movie metadata first (see getMetaData() ->
-			// Fanart/Background)
+			// Need to scrape movie metadata first (see getMetaData() -> Fanart/Background)
 			md = getMetadata(options);
 			LOGGER.debug("AEBN: return from media metadata scraping");
 			aebnId = Integer.parseInt(options.getId(AEBNID));
@@ -577,17 +567,6 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		return artwork;
 	}
 
-	/**
-	 * Get movie trailers from aebn.net
-	 * <p>
-	 * NOT IMPLEMENTED BY NOW.
-	 *
-	 */
-	@Override
-	public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
-		LOGGER.info("AEBN: getTrailers() not implemented (not available for free at aebn.net)");
-		return null;
-	}
 
 	/**
 	 * Maps scraper genres to internal TMM genres.
@@ -609,6 +588,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		return g;
 	}
 
+
 	/**
 	 * Sanitizes a string (remove non breaking spaces and trim).
 	 *
@@ -625,6 +605,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		// and trim
 		return StringUtils.trim(newString);
 	}
+
 
 	/**
 	 * Sanitizes the search query by removing
@@ -656,12 +637,13 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 		return StringUtils.trim(newString);
 	}
 
+
 	/**
-	 * Validates an aebn id.
+	 * Validates an AEBN id.
 	 *
 	 * @param aebnId
-	 *            the aebn id to be validated
-	 * @return true if is a valid aebn id, false otherwise
+	 *            the AEBN id to be validated
+	 * @return true if is a valid AEBN id, false otherwise
 	 */
 	private static boolean isValidAebnId(Integer aebnId) {
 		return ((aebnId != null) && (aebnId.intValue() > 0) && (aebnId.intValue() < 1000000));

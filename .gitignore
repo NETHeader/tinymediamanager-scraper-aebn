@@ -26,3 +26,9 @@ pom.xml.*
 .project
 .settings
 bin/
+
+# TinyMediaManager
+/cache/
+/data/
+/ignore/
+/helpers/

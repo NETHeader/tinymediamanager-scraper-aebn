@@ -19,7 +19,7 @@ import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
  * A test class for scraping aebn.net.
  *
  * @author NETHead <NETHead@gmx.net>
- * @version 0.2
+ * @version 0.3
  * @see AebnMetadataProvider
  *
  */

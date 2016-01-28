@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+/target/
+=======
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -32,3 +35,4 @@ bin/
 /data/
 /ignore/
 /helpers/
+>>>>>>> refs/heads/develop

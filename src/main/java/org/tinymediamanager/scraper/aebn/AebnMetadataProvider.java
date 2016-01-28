@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-206 NETHead <NETHead@gmx.net>
+ * Copyright 2015-2016 NETHead (NETHead@gmx.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -50,14 +50,15 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+// TODO: Auto-generated Javadoc
 /**
  * A meta data provider class for scraping aebn.net.
  *
- * Implements scraping of meta data, artwork and trailers.
+ * Implements scraping of meta data and artwork.
  *
- * @author NETHead <NETHead@gmx.net>
+ * @author NETHead (NETHead@gmx.net)
  * @version 0.3
- * @see IMediaMetadataProvider
+ * @see IMovieMetadataProvider
  * @see IMediaArtworkProvider
  *
  */
@@ -73,6 +74,11 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	private static final Integer SEARCH_COUNT = 60;
 
 
+	/**
+	 * Gets the single instance of AebnMetadataProvider.
+	 *
+	 * @return single instance of AebnMetadataProvider
+	 */
 	public static synchronized AebnMetadataProvider getInstance() {
 		if (instance == null) {
 			instance = new AebnMetadataProvider();
@@ -81,6 +87,9 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	}
 
 
+	/**
+	 * Instantiates a new aebn metadata provider.
+	 */
 	public AebnMetadataProvider() {
 		// configure/load settings
 		// providerInfo.getConfig().addBoolean("useTmdb", false);
@@ -90,12 +99,22 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	}
 
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.tinymediamanager.scraper.mediaprovider.IMediaProvider#getProviderInfo()
+	 */
 	@Override
 	public MediaProviderInfo getProviderInfo() {
 		return providerInfo;
 	}
 
 
+	/**
+	 * Creates the media provider info.
+	 *
+	 * @return the media provider info
+	 */
 	private static MediaProviderInfo createMediaProviderInfo() {
 		MediaProviderInfo providerInfo = new MediaProviderInfo(AEBNID, "aebn.net",
 				"<html><h3>Adult Entertainment Broadcast Network</h3><br />An adult movie database.<br />"
@@ -109,6 +128,11 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	/**
 	 * Search at aebn.net
 	 *
+	 * @param query
+	 *            the query
+	 * @return a list of found movie titles
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Override
 	public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
@@ -127,6 +151,15 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	}
 
 
+	/**
+	 * Search movies.
+	 *
+	 * @param query
+	 *            the query
+	 * @return a list of found movie titles
+	 * @throws Exception
+	 *             the exception
+	 */
 	public List<MediaSearchResult> searchMovies(MediaSearchOptions query) throws Exception {
 
 		LOGGER.debug("AEBN: searchMovies() {}", query);
@@ -238,6 +271,11 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	/**
 	 * Get movie meta data from aebn.net.
 	 *
+	 * @param options
+	 *            the options
+	 * @return metadata for the queried movie
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Override
 	public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
@@ -513,6 +551,11 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	/**
 	 * Get movie artwork from aebn.net.
 	 *
+	 * @param options
+	 *            the options
+	 * @return list of MediaArtwork
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Override
 	public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
@@ -617,6 +660,14 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	}
 
 
+	/**
+	 * Prepare default poster.
+	 *
+	 * @param ma
+	 *            the MediaArtwork
+	 * @param options
+	 *            the scrape options
+	 */
 	private void prepareDefaultPoster(MediaArtwork ma, MediaScrapeOptions options) {
 		for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
 			// LARGE
@@ -659,6 +710,14 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	}
 
 
+	/**
+	 * Prepare default fanart.
+	 *
+	 * @param ma
+	 *            the MediaArtwork
+	 * @param options
+	 *            the scrape options
+	 */
 	private void prepareDefaultFanart(MediaArtwork ma, MediaScrapeOptions options) {
 		for (MediaArtwork.ImageSizeAndUrl image : ma.getImageSizes()) {
 			// LARGE
@@ -718,7 +777,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	 *
 	 * @param oldString
 	 *            string to clean
-	 * @return the cleaned string
+	 * @return the trimmed string without non breaking spaces
 	 */
 	private String cleanString(String oldString) {
 		if (StringUtils.isEmpty(oldString)) {
@@ -734,12 +793,12 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	/**
 	 * Sanitizes the search query by removing
 	 * <ul>
-	 * <li>stop words (a, the, der, die, das, la, le, il),
-	 * <li>digit values (e.g. year),
-	 * <li>punctuation marks,
-	 * <li>multiple spaces.
+	 * <li>stop words (a, the, der, die, das, la, le, il),</li>
+	 * <li>digit values (e.g. year),</li>
+	 * <li>punctuation marks,</li>
+	 * <li>multiple spaces.</li>
 	 * </ul>
-	 *
+	 * 
 	 * @param query
 	 *            search query string to clean
 	 * @return the cleaned search query string

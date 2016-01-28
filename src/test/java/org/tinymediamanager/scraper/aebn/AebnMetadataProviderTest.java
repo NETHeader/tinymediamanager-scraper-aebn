@@ -1,3 +1,15 @@
+/*
+ * Copyright 2015-2016 NETHead (NETHead@gmx.net)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package org.tinymediamanager.scraper.aebn;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,16 +27,23 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
+// TODO: Auto-generated Javadoc
 /**
  * A test class for scraping aebn.net.
  *
- * @author NETHead <NETHead@gmx.net>
+ * @author NETHead (NETHead@gmx.net)
  * @version 0.3
  * @see AebnMetadataProvider
  *
  */
 public class AebnMetadataProviderTest {
 
+	/**
+	 * Test search.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void testSearch() throws Exception {
 		try {
@@ -41,6 +60,13 @@ public class AebnMetadataProviderTest {
 		}
 	}
 
+
+	/**
+	 * Test scrape data.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public void testScrapeData() throws Exception {
 		try {

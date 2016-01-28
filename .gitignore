@@ -27,3 +27,5 @@ pom.xml.*
 .settings
 bin/
 
+/javadoc.xml
+/doc/

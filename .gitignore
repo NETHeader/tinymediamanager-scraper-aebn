@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/target/
-=======
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -30,9 +27,3 @@ pom.xml.*
 .settings
 bin/
 
-# TinyMediaManager
-/cache/
-/data/
-/ignore/
-/helpers/
->>>>>>> refs/heads/develop

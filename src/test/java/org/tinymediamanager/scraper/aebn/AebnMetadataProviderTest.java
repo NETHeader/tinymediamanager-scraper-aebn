@@ -27,7 +27,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.mediaprovider.IMovieMetadataProvider;
 
-// TODO: Auto-generated Javadoc
 /**
  * A test class for scraping aebn.net.
  *
@@ -73,7 +72,7 @@ public class AebnMetadataProviderTest {
 			IMovieMetadataProvider aebn = new AebnMetadataProvider();
 			MediaScrapeOptions options = new MediaScrapeOptions(MediaType.MOVIE);
 
-			options.setId("AebnID", "183071");
+			options.setId("aebn", "183071");
 			MediaMetadata md = aebn.getMetadata(options);
 
 			assertThat(md).isNotNull();
@@ -91,13 +90,9 @@ public class AebnMetadataProviderTest {
 			assertThat(md.getGenres().size()).isEqualTo(7);
 			assertThat(md.getGenres().contains(MediaGenres.EROTIC)).isTrue();
 			assertThat(md.getStringValue(MediaMetadata.COLLECTION_NAME)).isEqualTo("Erotic Massage Stories");
-			assertThat(md.getCastMembers().size()).isEqualTo(8); // Don't forget
-																	// to
-																	// include
-																	// actor +
-																	// director
-																	// in this
-																	// number!
+
+			// Don't forget to include actor + director in the cast member count!
+			assertThat(md.getCastMembers().size()).isEqualTo(8);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			e.printStackTrace();

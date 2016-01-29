@@ -31,14 +31,14 @@
 
     <!-- TESTS -->
   </dependencies>
-  <url>https://github.com/NETHeader/${project.artifactId}</url>
+  <url>https://github.com/NETHeader/tinymediamanager-${project.artifactId}</url>
   <issueManagement>
       <system>Github Issues</system>
-      <url>https://github.com/NETHeader/${project.artifactId}/issues</url>
+      <url>https://github.com/NETHeader/tinymediamanager-${project.artifactId}/issues</url>
   </issueManagement>
   <scm>
-      <url>https://github.com/NETHeader/${project.artifactId}</url>
-      <connection>scm:git:https://github.com/NETHeader/${project.artifactId}</connection>
+      <url>https://github.com/NETHeader/tinymediamanager-${project.artifactId}</url>
+      <connection>scm:git:https://github.com/NETHeader/tinymediamanager-${project.artifactId}</connection>
       <developerConnection>scm:git:https://github.com/NETHeader</developerConnection>
   </scm>
   <inceptionYear>2014</inceptionYear>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 NETHead (NETHead@gmx.net)
+ * Copyright 2015-2016 NETHead
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -50,13 +50,12 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-// TODO: Auto-generated Javadoc
 /**
  * A meta data provider class for scraping aebn.net.
  *
  * Implements scraping of meta data and artwork.
  *
- * @author NETHead (NETHead@gmx.net)
+ * @author NETHead (NETHead.AT.gmx.DOT.net)
  * @version 0.3
  * @see IMovieMetadataProvider
  * @see IMediaArtworkProvider
@@ -559,6 +558,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	 */
 	@Override
 	public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+
 		LOGGER.debug("AEBN: getArtwork() {}", options);
 		List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 		MediaMetadata md;
@@ -656,6 +656,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 				i++;
 			}
 		}
+
 		return artwork;
 	}
 
@@ -798,7 +799,7 @@ public class AebnMetadataProvider implements IMovieMetadataProvider, IMediaArtwo
 	 * <li>punctuation marks,</li>
 	 * <li>multiple spaces.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param query
 	 *            search query string to clean
 	 * @return the cleaned search query string
